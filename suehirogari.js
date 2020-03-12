@@ -8,7 +8,8 @@ function onOpen(){
   var days = PropertiesService.getUserProperties().getProperty("atr_days") || 20;
   var accountType = PropertiesService.getUserProperties().getProperty("accountType") || "demo";
   ui.createMenu(multiLang('Trade'))
-  .addItem(multiLang('Add to watchlist'), 'addWatchSheet')
+  .addItem(multiLang('Import'), 'openDialog')
+  .addItem(multiLang('Add current sheet to list'), 'setAccountID')
   .addItem(multiLang('Oanda order'), 'onClickItem2')
   .addItem(multiLang('ATR '+days+' days'), "setATRdays")
     .addSeparator()
@@ -28,6 +29,36 @@ function updateSheets(){
 }
 
 // menu function
+
+function openDialog() {
+  var html = HtmlService.createTemplateFromFile("html/load_dialog.html");
+  html.fName = multiLang('File Name:')
+  html.buttonTitle = multiLang('Import')
+  SpreadsheetApp.getUi().showModelessDialog(html.evaluate(),multiLang('Load of a local file'));
+}
+
+function writeSheetupload(formObject) {
+ 
+  // フォームで指定したテキストファイルを読み込む
+  var fileBlob = formObject.myFile;
+  
+  // テキストとして取得（Windowsの場合、文字コードに Shift_JIS を指定）
+  var text = fileBlob.getDataAsString("sjis");  
+  
+  // 改行コードで分割し配列に格納する
+  var textLines = text.split(/[\s]+/);
+  
+  // 書き込むシートを取得
+  var sheet = SpreadsheetApp.getActiveSheet();
+
+  // テキストファイルをシートに展開する
+  for (var i = 0; i < textLines.length; i++) {
+    sheet.getRange(i + 1, 1).setValue(textLines[i]);
+  }
+  
+  // 処理終了のメッセージボックスを出力
+  Browser.msgBox("ローカルファイルを読み込みました");
+}
 
 function setATRdays(){
   var days = PropertiesService.getUserProperties().getProperty("atr_days") || 20;

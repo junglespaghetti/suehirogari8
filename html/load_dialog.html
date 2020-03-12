@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <form method="post" enctype="multipart/form-data">
+      <label for="file"><?= fName ?></label><br><input type="file" name="file" /><br><br>
+      <input type="submit" value="<?= buttonTitle ?>" onclick="google.script.run.withSuccessHandler(function() {google.script.host.close();}).upload(this.parentNode)"/>
+    </form>
+  </body>
+</html>
